@@ -1,0 +1,31 @@
+{
+  "extName": {"message": "Windows Power Timer"},
+  "extDescription": {"message": "Schedule Windows sleep or shutdown from Chrome in one-minute increments."},
+  "powerTimer": {"message": "Power timer"},
+  "timerDuration": {"message": "Timer duration"},
+  "presets": {"message": "Presets"},
+  "actionLegend": {"message": "Power action"},
+  "sleep": {"message": "Sleep"},
+  "sleepDescription": {"message": "Put Windows to sleep"},
+  "shutdown": {"message": "Shut down"},
+  "shutdownDescription": {"message": "Shut down Windows"},
+  "startTimer": {"message": "Start timer"},
+  "cancelTimer": {"message": "Cancel timer"},
+  "timeRemaining": {"message": "Time remaining"},
+  "checkingHost": {"message": "Checking Windows host…"},
+  "chromeRunningNote": {"message": "Chrome must still be running when the timer expires."},
+  "hostConnected": {"message": "Windows host connected"},
+  "hostNotConnected": {"message": "Windows host not connected"},
+  "installFirst": {"message": "Run install.ps1 before starting a timer."},
+  "timerStarted": {"message": "Timer started."},
+  "timerCancelled": {"message": "Timer cancelled."},
+  "timerStartFailed": {"message": "Could not start the timer."},
+  "timerCancelFailed": {"message": "Could not cancel the timer."},
+  "nativeConnectionFailed": {"message": "Could not connect"},
+  "shutdownScheduled": {"message": "Shutdown scheduled"},
+  "sleepScheduled": {"message": "Sleep scheduled"},
+  "confirmShutdown": {
+    "message": "Shut down Windows in $MINUTES$ minutes?",
+    "placeholders": {"minutes": {"content": "$1"}}
+  }
+}

@@ -1,55 +1,93 @@
-# Windows Power Timer
+# Windows Power Timer for Chrome
 
-Chromeから **1分単位** で時間を指定し、指定時刻にWindowsを **スリープ** または **シャットダウン** するローカル拡張です。
+Schedule **Windows sleep or shutdown from the Chrome toolbar**, with one-minute precision and no background service, account, telemetry, or administrator rights.
 
-## 構成
+The extension keeps the countdown in Chrome and sends only the final power action to a small local Native Messaging host. English and Japanese UI are included.
 
-- `extension/`: Manifest V3 Chrome拡張。`chrome.alarms` でタイマーを保持します。
-- `host/`: Windows側のNative Messaging host。受け付ける操作を限定しています。
-- `scripts/install-host.ps1`: hostをWindowsへコンパイル・配置し、HKCUへ登録します。管理者権限は不要です。
+## Features
 
-拡張IDはmanifestの公開鍵で `lfcapfodknbfpomfifbkfekikbflmjck` に固定し、Native Messagingの`allowed_origins`もこのIDだけを許可します。
+- 1-minute to 7-day countdowns
+- Sleep or shutdown selection
+- 5m / 15m / 30m / 1h presets
+- Visible remaining time and cancel button
+- Shutdown confirmation before scheduling
+- Current-user installation; no administrator rights
+- No network permission, telemetry, account, or cloud dependency
+- Stable unpacked-extension ID for Native Messaging
 
-## インストール
+## Requirements
 
-WSLのこのリポジトリで実行します。
+- Windows 10 or Windows 11
+- Google Chrome
+- Windows PowerShell 5.1
+
+The installer uses the .NET Framework C# compiler included with Windows to build the small native host from source.
+
+## Quick start
+
+Download and extract the latest GitHub Release, then open Windows PowerShell in the extracted folder and run:
+
+```powershell
+.\install.ps1 -OpenChromeExtensions
+```
+Chrome opens `chrome://extensions`. Enable **Developer mode**, choose **Load unpacked**, and select the extension directory printed by the installer, normally:
+
+```text
+%LOCALAPPDATA%\Tomdachs\WindowsPowerTimer\extension
+```
+
+The expected unpacked extension ID is `lfcapfodknbfpomfifbkfekikbflmjck`.
+
+To verify or remove the installation:
+
+```powershell
+.\install.ps1 -Check
+.\install.ps1 -Uninstall
+```
+
+### Developing from WSL
+
+The same installer can be launched from WSL:
 
 ```bash
 powershell.exe -NoProfile -ExecutionPolicy Bypass \
-  -File "$(wslpath -w scripts/install-host.ps1)" -OpenChromeExtensions
+  -File "$(wslpath -w install.ps1)" -OpenChromeExtensions
 ```
 
-Windows側の `%LOCALAPPDATA%\Tomdachs\WindowsPowerTimer` にhostと拡張ファイルが配置されます。Chromeで次を1回だけ行います。
+## How it works
 
-1. `chrome://extensions` で「デベロッパー モード」をON。
-2. 「パッケージ化されていない拡張機能を読み込む」を押す。
-3. `%LOCALAPPDATA%\Tomdachs\WindowsPowerTimer\extension` を選ぶ。
-4. `Windows Power Timer` をツールバーへ固定する。
+`extension/` is a Manifest V3 extension using `chrome.alarms` and local extension storage. `host/` contains the Windows Native Messaging executable source. `install.ps1` builds and registers the host under the current user's Chrome Native Messaging registry key.
 
-更新後は `install-host.ps1` を再実行し、`chrome://extensions` の拡張カードで再読み込みします。
+The native host accepts only `ping`, `sleep`, and `shutdown`. It cannot execute arbitrary commands and it does not access the network.
+## Safety and limitations
 
-## 使い方
+- Chrome must still be running when the timer expires.
+- If Chrome was closed and the deadline is already more than two minutes late, the action expires instead of running unexpectedly on the next Chrome launch.
+- Shutdown uses Windows `shutdown.exe /s /t 0`; save open work before scheduling it.
+- Sleep availability depends on the Windows device's supported power states and policy.
+- The project does not bypass UAC or Windows security settings.
 
-HOURS / MINUTESを整数で入力します。最小1分、最大7日です。`5m / 15m / 30m / 1h` のプリセットもあります。動作を「スリープ」または「シャットダウン」から選んで開始します。シャットダウン選択時は誤操作防止の確認を表示します。
+See [PRIVACY.md](PRIVACY.md) and [SECURITY.md](SECURITY.md) for the trust boundary.
 
-タイマーはChromeの拡張アラームで管理するため、**実行時までChromeが起動している必要があります**。Chromeが停止したまま予定時刻を2分以上過ぎた場合は、安全のため遅延実行せず期限切れとして扱います。
-
-## 確認
+## Development
 
 ```bash
+npm test
 ./scripts/check.sh
 ```
 
-Nodeのロジックテスト、manifest JSON、Windows PowerShellによるNative hostのコンパイル、`ping`フレーム確認を行います。テストではスリープ/シャットダウンを実行しません。
+`./scripts/check.sh` tests the timer logic, validates extension JSON, compiles the Windows native host, and sends a harmless Native Messaging `ping`. It never sleeps or shuts down the machine.
 
-インストール状態だけ確認:
+Create a release archive on Windows:
 
-```bash
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(wslpath -w scripts/install-host.ps1)" -Check
+```powershell
+.\scripts\package-release.ps1
 ```
 
-アンインストール:
+## Project scope
 
-```bash
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(wslpath -w scripts/install-host.ps1)" -Uninstall
-```
+This project intentionally focuses on a small browser-controlled Windows power timer. It is not a general task scheduler, remote-control service, or system optimization suite. See [docs/competitive-landscape.md](docs/competitive-landscape.md) for the public OSS positioning snapshot.
+
+## License
+
+MIT

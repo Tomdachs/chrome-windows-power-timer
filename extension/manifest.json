@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Windows Power Timer",
+  "name": "__MSG_extName__",
   "version": "0.1.0",
-  "description": "Schedule Windows sleep or shutdown from Chrome in one-minute increments.",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzvf5uXExZ6mUJoKWBep917Mrzk1z1aYXyXo7y2nnmTryhTkIq4toXEWJ4b45p2+nETecMGO49z3mnsusYu38RGBbYSE8VIXsAoV4WhxJzuGqiCNwGCj2jLUHd/cBqqlfIOZT4wcO8aB7FcAcjUHXxv8Q8vcQ6DLSwJBAiaa/LUG+mbnCRmU52XIeZ0FT8Y3JZh2peVrcs9TFxfzqakZYASknCPu1fyikFXXpq1My3CyPCi/p7Ttpwmr4+LUWqm1Uc1egNuxKfqdwEGNT0CphMS63eCyYH32XWcD//Bx1aD/3dgyx/kdi/ZUWwN8HMfGRbcQdtsXesZOUWHIBHLC0SwIDAQAB",
   "permissions": ["alarms", "storage", "nativeMessaging"],
   "background": {
@@ -10,7 +11,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Windows Power Timer",
+    "default_title": "__MSG_extName__",
     "default_popup": "popup.html"
   }
 }

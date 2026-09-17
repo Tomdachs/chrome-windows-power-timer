@@ -7,6 +7,8 @@ node --check extension/popup.js
 node --check extension/timer-utils.js
 node --test tests/*.test.mjs
 python3 -m json.tool extension/manifest.json >/dev/null
+python3 -m json.tool extension/_locales/en/messages.json >/dev/null
+python3 -m json.tool extension/_locales/ja/messages.json >/dev/null
 
 csc='/mnt/c/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 [[ -x "$csc" ]] || csc='/mnt/c/Windows/Microsoft.NET/Framework/v4.0.30319/csc.exe'

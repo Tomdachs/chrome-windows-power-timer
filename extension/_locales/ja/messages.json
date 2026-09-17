@@ -1,0 +1,31 @@
+{
+  "extName": {"message": "Windows Power Timer"},
+  "extDescription": {"message": "Chromeから1分単位でWindowsのスリープまたはシャットダウンを予約します。"},
+  "powerTimer": {"message": "電源タイマー"},
+  "timerDuration": {"message": "タイマー時間"},
+  "presets": {"message": "プリセット"},
+  "actionLegend": {"message": "実行する動作"},
+  "sleep": {"message": "スリープ"},
+  "sleepDescription": {"message": "Windowsをスリープ状態にする"},
+  "shutdown": {"message": "シャットダウン"},
+  "shutdownDescription": {"message": "Windowsを終了する"},
+  "startTimer": {"message": "タイマー開始"},
+  "cancelTimer": {"message": "タイマーをキャンセル"},
+  "timeRemaining": {"message": "残り時間"},
+  "checkingHost": {"message": "Windows host を確認中…"},
+  "chromeRunningNote": {"message": "タイマー実行時までChromeが起動している必要があります。"},
+  "hostConnected": {"message": "Windows host 接続済み"},
+  "hostNotConnected": {"message": "Windows host 未接続"},
+  "installFirst": {"message": "先に install.ps1 を実行してください。"},
+  "timerStarted": {"message": "タイマーを開始しました。"},
+  "timerCancelled": {"message": "タイマーをキャンセルしました。"},
+  "timerStartFailed": {"message": "タイマーを開始できませんでした。"},
+  "timerCancelFailed": {"message": "キャンセルできませんでした。"},
+  "nativeConnectionFailed": {"message": "接続できません"},
+  "shutdownScheduled": {"message": "シャットダウン予定"},
+  "sleepScheduled": {"message": "スリープ予定"},
+  "confirmShutdown": {
+    "message": "$MINUTES$分後にWindowsをシャットダウンします。開始しますか？",
+    "placeholders": {"minutes": {"content": "$1"}}
+  }
+}

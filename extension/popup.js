@@ -14,6 +14,20 @@ const hostText = document.querySelector("#hostText");
 let activeState = null;
 let ticker = null;
 
+function t(key, substitutions) {
+  return chrome.i18n.getMessage(key, substitutions) || key;
+}
+
+function localizeDocument() {
+  document.documentElement.lang = chrome.i18n.getUILanguage().toLowerCase().startsWith("ja") ? "ja" : "en";
+  for (const element of document.querySelectorAll("[data-i18n]")) {
+    element.textContent = t(element.dataset.i18n);
+  }
+  for (const element of document.querySelectorAll("[data-i18n-aria]")) {
+    element.setAttribute("aria-label", t(element.dataset.i18nAria));
+  }
+}
+
 function selectedAction() {
   return document.querySelector('input[name="action"]:checked').value;
 }
@@ -40,7 +54,7 @@ function render() {
 
   if (active) {
     countdown.textContent = formatRemaining(activeState.targetTime);
-    runningAction.textContent = activeState.action === "shutdown" ? "シャットダウン予定" : "スリープ予定";
+    runningAction.textContent = activeState.action === "shutdown" ? t("shutdownScheduled") : t("sleepScheduled");
   }
 }
 
@@ -54,13 +68,13 @@ async function refreshState() {
 async function checkHost() {
   try {
     const response = await chrome.runtime.sendMessage({ type: "ping-native" });
-    if (!response?.ok) throw new Error(response?.error || "接続できません");
+    if (!response?.ok) throw new Error(response?.error || t("nativeConnectionFailed"));
     hostStatus.className = "dot ok";
-    hostText.textContent = `Windows host 接続済み${response.version ? ` (v${response.version})` : ""}`;
-  } catch (error) {
+    hostText.textContent = `${t("hostConnected")}${response.version ? ` (v${response.version})` : ""}`;
+  } catch (_error) {
     hostStatus.className = "dot error";
-    hostText.textContent = "Windows host 未接続";
-    setMessage("先に scripts/install-host.ps1 を実行してください。");
+    hostText.textContent = t("hostNotConnected");
+    setMessage(t("installFirst"));
   }
 }
 
@@ -73,11 +87,11 @@ startButton.addEventListener("click", async () => {
   try {
     const totalMinutes = toTotalMinutes(Number(hoursInput.value), Number(minutesInput.value));
     const action = selectedAction();
-    if (action === "shutdown" && !confirm(`${totalMinutes}分後にWindowsをシャットダウンします。開始しますか？`)) return;
+    if (action === "shutdown" && !confirm(t("confirmShutdown", [String(totalMinutes)]))) return;
     const response = await chrome.runtime.sendMessage({ type: "start", totalMinutes, action });
-    if (!response?.ok) throw new Error(response?.error || "タイマーを開始できませんでした。");
+    if (!response?.ok) throw new Error(response?.error || t("timerStartFailed"));
     activeState = response.state;
-    setMessage("タイマーを開始しました。");
+    setMessage(t("timerStarted"));
     render();
   } catch (error) {
     setMessage(error.message || String(error));
@@ -87,11 +101,11 @@ startButton.addEventListener("click", async () => {
 cancelButton.addEventListener("click", async () => {
   const response = await chrome.runtime.sendMessage({ type: "cancel" });
   if (!response?.ok) {
-    setMessage(response?.error || "キャンセルできませんでした。");
+    setMessage(response?.error || t("timerCancelFailed"));
     return;
   }
   activeState = response.state;
-  setMessage("タイマーをキャンセルしました。");
+  setMessage(t("timerCancelled"));
   render();
 });
 
@@ -105,5 +119,6 @@ function startTicker() {
   }, 500);
 }
 
+localizeDocument();
 await Promise.all([refreshState(), checkHost()]);
 startTicker();

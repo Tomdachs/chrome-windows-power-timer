@@ -16,9 +16,10 @@ $candidates = @(
     (Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'),
     (Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe')
 ) | Where-Object { Test-Path -LiteralPath $_ }
-if ($candidates.Count -eq 0) { throw 'The .NET Framework C# compiler (csc.exe) was not found.' }
+$compiler = $candidates | Select-Object -First 1
+if (-not $compiler) { throw 'The .NET Framework C# compiler (csc.exe) was not found.' }
 
-& $candidates[0] /nologo /target:exe /reference:System.Windows.Forms.dll "/out:$outputFullPath" $sourcePath
+& $compiler /nologo /target:exe /reference:System.Windows.Forms.dll "/out:$outputFullPath" $sourcePath
 if ($LASTEXITCODE -ne 0) { throw "csc.exe failed with exit code $LASTEXITCODE." }
 [void][Reflection.AssemblyName]::GetAssemblyName($outputFullPath)
 Write-Host "Built native host: $outputFullPath"

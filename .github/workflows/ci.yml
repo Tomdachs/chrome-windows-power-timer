@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - name: Validate JSON
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('extension/manifest.json'))"
+          node -e "JSON.parse(require('fs').readFileSync('extension/_locales/en/messages.json'))"
+          node -e "JSON.parse(require('fs').readFileSync('extension/_locales/ja/messages.json'))"
+
+  windows-native-host:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build native host
+        shell: powershell
+        run: .\scripts\build-host.ps1
+      - name: Ping native host
+        shell: powershell
+        run: python .\tests\host_ping.py .\dist\windows-power-host.exe
+      - name: Validate release package
+        shell: powershell
+        run: |
+          .\scripts\package-release.ps1
+          if (-not (Test-Path .\dist\chrome-windows-power-timer-0.1.0.zip)) {
+            throw 'Release package was not created.'
+          }
