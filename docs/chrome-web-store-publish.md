@@ -1,5 +1,23 @@
 # Chrome Web Store publication checklist
 
+## Current checkpoint — paused 2026-09-17
+
+Chrome Web Store publication is intentionally **paused before developer registration/payment**. There is no urgency to publish, and the one-time Chrome Web Store developer registration fee has not been paid as part of this work. No item has been submitted for review.
+
+Prepared state at the pause point:
+
+- Public GitHub repository and working unpacked extension are available.
+- Local sleep/shutdown behavior was manually smoke-tested successfully.
+- Source/manifest are prepared as `0.1.1`; the latest published GitHub Release remains `v0.1.0`.
+- Store icon, promo images, 1280x800 screenshots, English/Japanese listing copy, privacy answers, and reviewer instructions are prepared.
+- `npm run package:webstore` produces `dist/web-store/windows-power-timer-0.1.1.zip`; its upload manifest intentionally omits the development `key`.
+- Native-host installer supports `-NativeHostOnly -ExtensionId <STORE_EXTENSION_ID>` so the future Web Store ID can be authorized after the first upload.
+- CI validates the Web Store package/assets and the Windows native host.
+
+To resume, first decide to register/pay for the Chrome Web Store developer account. Then upload the prepared ZIP **without submitting for review**, record the assigned Store extension ID, wire that ID into the companion-host defaults, run a store-installed smoke test, and only then submit for review.
+
+Do not create a `v0.1.1` GitHub Release solely for the Web Store preparation checkpoint; publish it when the companion-host defaults contain the actual Store extension ID or when a separate release is otherwise justified.
+
 ## Prepared in this repository
 
 - Manifest V3 extension package
