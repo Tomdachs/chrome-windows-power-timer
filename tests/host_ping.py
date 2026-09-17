@@ -20,5 +20,5 @@ if len(completed.stdout) < 4:
 length = struct.unpack("<I", completed.stdout[:4])[0]
 response = json.loads(completed.stdout[4:4 + length].decode("utf-8"))
 assert response.get("ok") is True, response
-assert response.get("version") == "0.1.0", response
+assert response.get("version") == "0.1.1", response
 print("native host ping OK")

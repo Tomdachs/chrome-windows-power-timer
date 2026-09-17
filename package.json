@@ -1,11 +1,13 @@
 {
   "name": "chrome-windows-power-timer",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "screenshots": "node scripts/capture-screenshots.mjs"
+    "screenshots": "node scripts/capture-screenshots.mjs",
+    "store-assets": "node scripts/generate-store-assets.mjs",
+    "package:webstore": "python3 scripts/package_web_store.py"
   },
   "devDependencies": {
     "playwright": "^1.63.0"

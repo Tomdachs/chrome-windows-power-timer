@@ -1,3 +1,5 @@
+<img src="extension/icons/icon128.png" alt="Windows Power Timer icon" width="96" align="right">
+
 # Windows Power Timer for Chrome
 
 Schedule **Windows sleep or shutdown from the Chrome toolbar**, with one-minute precision and no background service, account, telemetry, or administrator rights.
@@ -22,6 +24,8 @@ The extension keeps the countdown in Chrome and sends only the final power actio
 | ![Windows Power Timer ready to schedule](docs/screenshots/popup-idle.png) | ![Windows Power Timer countdown running](docs/screenshots/popup-running.png) |
 
 The screenshots are generated from the real popup UI with Playwright and a minimal Chrome API fixture. Run `npm run screenshots` to regenerate them. Store-ready 1280x800 captures are generated in the same directory.
+
+Chrome Web Store icon/promo assets are reproducible with `npm run store-assets`. Submission copy and privacy answers live in [`docs/chrome-web-store-listing.md`](docs/chrome-web-store-listing.md), [`docs/chrome-web-store-privacy.md`](docs/chrome-web-store-privacy.md), and [`docs/chrome-web-store-publish.md`](docs/chrome-web-store-publish.md).
 
 ## Requirements
 

@@ -14,6 +14,10 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm test
+      - name: Validate store assets and package
+        run: |
+          python3 tests/validate_store_assets.py
+          python3 scripts/package_web_store.py
       - name: Validate JSON
         run: |
           node -e "JSON.parse(require('fs').readFileSync('extension/manifest.json'))"
@@ -37,6 +41,7 @@ jobs:
         shell: powershell
         run: |
           .\scripts\package-release.ps1
-          if (-not (Test-Path .\dist\chrome-windows-power-timer-0.1.0.zip)) {
+          $version = (Get-Content .\extension\manifest.json -Raw | ConvertFrom-Json).version
+          if (-not (Test-Path ".\dist\chrome-windows-power-timer-$version.zip")) {
             throw 'Release package was not created.'
           }

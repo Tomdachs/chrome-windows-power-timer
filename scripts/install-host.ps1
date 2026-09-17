@@ -3,8 +3,9 @@ param(
     [Parameter(ParameterSetName = 'Check')][switch]$Check,
     [Parameter(ParameterSetName = 'Uninstall')][switch]$Uninstall,
     [switch]$OpenChromeExtensions,
+    [switch]$NativeHostOnly,
     [ValidatePattern('^[a-p]{32}$')]
-    [string]$ExtensionId = 'lfcapfodknbfpomfifbkfekikbflmjck'
+    [string[]]$ExtensionId = @('lfcapfodknbfpomfifbkfekikbflmjck')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -49,7 +50,6 @@ function Test-Installation {
     $problems = New-Object Collections.Generic.List[string]
     if (-not (Test-Path -LiteralPath $hostExe)) { $problems.Add("Missing host executable: $hostExe") }
     if (-not (Test-Path -LiteralPath $hostManifest)) { $problems.Add("Missing host manifest: $hostManifest") }
-    if (-not (Test-Path -LiteralPath $extensionInstallDir)) { $problems.Add("Missing extension directory: $extensionInstallDir") }
     if (-not (Test-Path -LiteralPath $registryPath)) {
         $problems.Add("Missing registry key: $registryPath")
     } else {
@@ -59,9 +59,11 @@ function Test-Installation {
     if (Test-Path -LiteralPath $hostManifest) {
         try {
             $nativeManifest = Get-Content -LiteralPath $hostManifest -Raw | ConvertFrom-Json
-            $expectedOrigin = "chrome-extension://$ExtensionId/"
-            if ($expectedOrigin -notin @($nativeManifest.allowed_origins)) {
-                $problems.Add("Native host does not allow expected extension origin: $expectedOrigin")
+            foreach ($id in $ExtensionId) {
+                $expectedOrigin = "chrome-extension://$id/"
+                if ($expectedOrigin -notin @($nativeManifest.allowed_origins)) {
+                    $problems.Add("Native host does not allow expected extension origin: $expectedOrigin")
+                }
             }
         } catch {
             $problems.Add("Native host manifest is invalid JSON: $($_.Exception.Message)")
@@ -72,8 +74,8 @@ function Test-Installation {
         return $false
     }
     Write-Host 'Windows Power Timer native host is installed correctly.'
-    Write-Host "Extension directory: $extensionInstallDir"
-    Write-Host "Expected extension ID: $ExtensionId"
+    if (Test-Path -LiteralPath $extensionInstallDir) { Write-Host "Extension directory: $extensionInstallDir" }
+    Write-Host "Allowed extension ID(s): $($ExtensionId -join ', ')"
     return $true
 }
 
@@ -91,17 +93,19 @@ if ($Check) {
 New-Item -ItemType Directory -Force -Path $installDir | Out-Null
 & (Join-Path $PSScriptRoot 'build-host.ps1') -OutputPath $hostExe
 
-if (Test-Path -LiteralPath $extensionInstallDir) {
-    Remove-Item -LiteralPath $extensionInstallDir -Recurse -Force
+if (-not $NativeHostOnly) {
+    if (Test-Path -LiteralPath $extensionInstallDir) {
+        Remove-Item -LiteralPath $extensionInstallDir -Recurse -Force
+    }
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot '..\extension') -Destination $extensionInstallDir -Recurse -Force
 }
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot '..\extension') -Destination $extensionInstallDir -Recurse -Force
 
 $manifestObject = [ordered]@{
     name = $hostName
     description = 'Windows sleep/shutdown native host for Windows Power Timer'
     path = $hostExe
     type = 'stdio'
-    allowed_origins = @("chrome-extension://$ExtensionId/")
+    allowed_origins = @($ExtensionId | ForEach-Object { "chrome-extension://$_/" })
 }
 Write-Utf8NoBom -Path $hostManifest -Text ($manifestObject | ConvertTo-Json -Depth 3)
 New-Item -Path $registryPath -Force | Out-Null
@@ -110,10 +114,14 @@ Set-Item -LiteralPath $registryPath -Value $hostManifest
 if (-not (Test-Installation)) { throw 'Installation verification failed.' }
 
 Write-Host ''
-Write-Host 'Next: open chrome://extensions, enable Developer mode, choose Load unpacked, and select:'
-Write-Host "  $extensionInstallDir"
+if ($NativeHostOnly) {
+    Write-Host 'Native host installation complete. The Chrome extension should be installed separately.'
+} else {
+    Write-Host 'Next: open chrome://extensions, enable Developer mode, choose Load unpacked, and select:'
+    Write-Host "  $extensionInstallDir"
+}
 
-if ($OpenChromeExtensions) {
+if ($OpenChromeExtensions -and -not $NativeHostOnly) {
     $chrome = Get-ChromeExecutable
     if (-not $chrome) { throw 'Chrome executable was not found.' }
     Write-Host "Opening Chrome: $chrome"

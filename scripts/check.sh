@@ -6,6 +6,9 @@ node --check extension/background.js
 node --check extension/popup.js
 node --check extension/timer-utils.js
 node --check scripts/capture-screenshots.mjs
+node --check scripts/generate-store-assets.mjs
+python3 -m py_compile scripts/package_web_store.py tests/validate_store_assets.py
+python3 tests/validate_store_assets.py
 node --test tests/*.test.mjs
 python3 -m json.tool extension/manifest.json >/dev/null
 python3 -m json.tool extension/_locales/en/messages.json >/dev/null

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 internal static class WindowsPowerHost
 {
-    private const string Version = "0.1.0";
+    private const string Version = "0.1.1";
     private const int MaxMessageBytes = 64 * 1024;
 
     public static int Main()

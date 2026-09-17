@@ -21,8 +21,11 @@ jobs:
           python-version: '3.13'
       - name: Install JavaScript dependencies
         run: npm ci
-      - name: Test JavaScript
-        run: npm test
+      - name: Test and validate assets
+        run: |
+          npm test
+          python tests/validate_store_assets.py
+          python scripts/package_web_store.py
       - name: Build and ping native host
         shell: powershell
         run: |
@@ -38,5 +41,6 @@ jobs:
         run: |
           $zip = Get-ChildItem .\dist\chrome-windows-power-timer-*.zip | Select-Object -First 1
           $sha = Get-ChildItem .\dist\chrome-windows-power-timer-*.zip.sha256 | Select-Object -First 1
-          gh release create $env:GITHUB_REF_NAME $zip.FullName $sha.FullName `
+          $storeZip = Get-ChildItem .\dist\web-store\windows-power-timer-*.zip | Select-Object -First 1
+          gh release create $env:GITHUB_REF_NAME $zip.FullName $sha.FullName $storeZip.FullName `
             --title $env:GITHUB_REF_NAME --generate-notes
