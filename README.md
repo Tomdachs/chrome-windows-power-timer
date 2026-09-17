@@ -15,6 +15,14 @@ The extension keeps the countdown in Chrome and sends only the final power actio
 - No network permission, telemetry, account, or cloud dependency
 - Stable unpacked-extension ID for Native Messaging
 
+## Screenshots
+
+| Ready to schedule | Countdown running |
+| --- | --- |
+| ![Windows Power Timer ready to schedule](docs/screenshots/popup-idle.png) | ![Windows Power Timer countdown running](docs/screenshots/popup-running.png) |
+
+The screenshots are generated from the real popup UI with Playwright and a minimal Chrome API fixture. Run `npm run screenshots` to regenerate them. Store-ready 1280x800 captures are generated in the same directory.
+
 ## Requirements
 
 - Windows 10 or Windows 11

@@ -5,6 +5,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 node --check extension/background.js
 node --check extension/popup.js
 node --check extension/timer-utils.js
+node --check scripts/capture-screenshots.mjs
 node --test tests/*.test.mjs
 python3 -m json.tool extension/manifest.json >/dev/null
 python3 -m json.tool extension/_locales/en/messages.json >/dev/null

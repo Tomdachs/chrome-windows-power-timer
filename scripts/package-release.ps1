@@ -30,8 +30,7 @@ foreach ($file in @('build-host.ps1', 'install-host.ps1')) {
 foreach ($file in @('install.ps1', 'README.md', 'LICENSE', 'PRIVACY.md', 'SECURITY.md')) {
     Copy-Item -LiteralPath (Join-Path $root $file) -Destination (Join-Path $stage $file)
 }
-New-Item -ItemType Directory -Force -Path (Join-Path $stage 'docs') | Out-Null
-Copy-Item -LiteralPath (Join-Path $root 'docs\README.ja.md') -Destination (Join-Path $stage 'docs\README.ja.md')
+Copy-Item -LiteralPath (Join-Path $root 'docs') -Destination (Join-Path $stage 'docs') -Recurse
 
 Compress-Archive -LiteralPath $stage -DestinationPath $zip -CompressionLevel Optimal
 $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $zip).Hash.ToLowerInvariant()
