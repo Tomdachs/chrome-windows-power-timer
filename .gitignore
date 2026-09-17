@@ -1,0 +1,4 @@
+dist/
+*.exe
+*.pdb
+.DS_Store
